@@ -9,15 +9,32 @@ trap - INT TERM
 
 if [[ ! -d "${HOME}/.aws" ]]; then
 	mkdir -p "${HOME}/.aws"
-	chown -R ${UID}:${GID} "${HOME}/.aws"
+	chown -R ${UID}:$(id -g ${UID}) "${HOME}/.aws"
 fi
 
+DOCKER_ARGS=""
+
+# I/O Detection for TTY
+# This allows use in subshells without CRLF line-endings from TTY.
+if [ -t 0 ] && [ -t 1 ]; then
+	DOCKER_ARGS+=" -t"
+fi
+
+# TTY Detection for Interactivity
+# This allows input in all but non-interactive shells.
+if tty -s; then
+	DOCKER_ARGS+=" -i"
+fi
+
+# AWS Environment Variables
+# Pass through all AWS variables, including session tokens and role assumption.
+while read line; do
+	DOCKER_ARGS+=" -e ${line}"
+done < <(env | grep "AWS_")
+
 docker run --rm \
-	-t $(tty &>/dev/null && echo "-i") \
-	$([[ -n "${AWS_ACCESS_KEY_ID:-}" ]] && echo "-e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}" || true) \
-	$([[ -n "${AWS_SECRET_ACCESS_KEY:-}" ]] && echo "-e AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}" || true) \
-	$([[ -n "${AWS_DEFAULT_REGION:-}" ]] && echo "-e AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}" || true) \
+	${DOCKER_ARGS} \
 	-v "$(pwd):/project" \
-	-v "${HOME}/.aws:/root/.aws"
+	-v "${HOME}/.aws:/root/.aws" \
 	mesosphere/aws-cli \
 	"$@"
