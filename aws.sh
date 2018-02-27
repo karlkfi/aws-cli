@@ -36,5 +36,5 @@ docker run --rm \
 	${DOCKER_ARGS} \
 	-v "$(pwd):/project" \
 	-v "${HOME}/.aws:/root/.aws" \
-	mesosphere/aws-cli \
+	karlkfi/aws-cli \
 	"$@"
