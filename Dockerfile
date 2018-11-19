@@ -1,4 +1,4 @@
-FROM alpine:3.6
+FROM alpine:3.8
 RUN apk -v --no-cache add \
         python \
         py-pip \
@@ -6,7 +6,7 @@ RUN apk -v --no-cache add \
         less \
         mailcap \
         && \
-    pip install --upgrade awscli==1.14.47 s3cmd==2.0.1 python-magic && \
+    pip install --upgrade awscli==1.16.57 s3cmd==2.0.1 python-magic && \
     apk -v --purge del py-pip
 VOLUME /root/.aws
 VOLUME /project
