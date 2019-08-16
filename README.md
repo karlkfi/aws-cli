@@ -2,7 +2,7 @@
 
 Containerized AWS CLI on alpine to avoid requiring the aws cli to be installed on CI machines.
 
-Fork of [mesosphere/aws-cli](https://github.com/mesosphere/aws-cli). I (Karl, the author) changed jobs and could no longer maintain it under the Mesosphere github organization.
+Fork of [mesosphere/aws-cli](https://github.com/mesosphere/aws-cli). [Karl](https://github.com/karlkfi), the original author changed jobs and could no longer maintain it under the Mesosphere github organization.
 
 ## Build
 
